@@ -5,40 +5,37 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth,  db } from "../firebase";
-import { setDoc, doc } from 'firebase/firestore'
-
-
+import { auth, db } from "../firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
 export function AuthContextProvider({ children }) {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
 
   function signUp(email, password) {
     createUserWithEmailAndPassword(auth, email, password);
-    setDoc(doc(db, 'users', email), {
-      savedShows: []
-    })
+    setDoc(doc(db, "users", email), {
+      savedShows: [],
+    });
   }
 
   function logIn(email, password) {
-    return signInWithEmailAndPassword(auth, email, password)
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
   function logOut() {
-    return signOut(auth)
+    return signOut(auth);
   }
 
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser)=> {
-        setUser(currentUser)
-    })
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
     return () => {
-        unsubscribe();
-    }
-  })
+      unsubscribe();
+    };
+  });
 
   return (
     <AuthContext.Provider value={{ signUp, logIn, logOut, user }}>
